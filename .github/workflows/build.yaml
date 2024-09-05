@@ -1,0 +1,41 @@
+name: Build & Test
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: npm ci
+        run: npm ci
+
+      - name: Test
+        run: npm run test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install AWS CDK
+        run: npm install -g aws-cdk
+
+      - name: npm ci
+        run: npm ci
+
+      - name: CDK Synth
+        run: cdk synth --context stage=test
