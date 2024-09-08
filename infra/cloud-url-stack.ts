@@ -12,10 +12,10 @@ import {HttpOrigin} from "aws-cdk-lib/aws-cloudfront-origins";
 import {OutputSet} from "./constructs/output-set";
 import {CfnLogGroup, LogGroup, RetentionDays} from "aws-cdk-lib/aws-logs";
 import {readFileSync} from "fs";
-import {readLinksFromFile} from "./utils";
+import {default as links} from '../links.json';
 
 export type LinkRecords = {
-    [key: string]: string | { url: string, expiresAt: string }
+    [key: string]: string | { url: string, expiresAt: string|null }
 };
 
 type CloudUrlStackProps = StackProps & {
@@ -29,7 +29,7 @@ export class CloudUrlStack extends Stack {
     constructor(scope: Construct, id: string, props?: CloudUrlStackProps) {
 
         if (props?.stage == null) {
-            throw new Error('Stage not set');
+            throw new Error('stage context value not set');
         }
 
         super(scope, id, {
@@ -49,8 +49,6 @@ export class CloudUrlStack extends Stack {
         const functionName = `CloudUrl-Redirect-${this.stage}`;
 
         const logGroup = this.createLogGroup(functionName);
-
-        const links = readLinksFromFile();
 
         const redirectFn = this.createRedirectFunction(functionName, logGroup, links);
 
