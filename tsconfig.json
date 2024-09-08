@@ -21,6 +21,8 @@
     "experimentalDecorators": true,
     "strictPropertyInitialization": false,
     "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "typeRoots": [
       "./node_modules/@types"
     ]
