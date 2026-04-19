@@ -107,7 +107,7 @@ export class CloudUrlStack extends Stack {
                         eventType: FunctionEventType.VIEWER_REQUEST,
                     }
                 ],
-                allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+                allowedMethods: AllowedMethods.ALLOW_ALL,
                 viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
             },
             httpVersion: HttpVersion.HTTP2_AND_3,
