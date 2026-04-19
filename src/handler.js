@@ -42,13 +42,13 @@ function linkMessageResponse(linkId, code, message, error) {
 function linkRedirectResponse(linkId, url) {
     console.log(JSON.stringify({
         linkId: linkId,
-        code: 302,
+        code: 307,
         message: 'Redirect',
         url,
         error: null,
     }));
     return {
-        statusCode: 302,
+        statusCode: 307,
         statusDescription: '',
         headers: {
             location: {
