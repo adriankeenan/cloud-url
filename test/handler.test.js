@@ -35,7 +35,7 @@ describe('handler', () => {
                     "value": "noindex",
                 },
             },
-            "statusCode": 302,
+            "statusCode": 307,
             "statusDescription": ""
         });
     });
