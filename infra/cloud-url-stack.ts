@@ -2,6 +2,7 @@ import {aws_cloudfront, aws_logs, Stack, StackProps, Tags} from 'aws-cdk-lib';
 import {Construct} from 'constructs';
 import {
     AllowedMethods,
+    CachePolicy,
     CfnDistribution,
     CfnFunction, Distribution,
     FunctionEventType,
@@ -108,6 +109,7 @@ export class CloudUrlStack extends Stack {
                     }
                 ],
                 allowedMethods: AllowedMethods.ALLOW_ALL,
+                cachePolicy: CachePolicy.CACHING_DISABLED,
                 viewerProtocolPolicy: ViewerProtocolPolicy.HTTPS_ONLY,
             },
             httpVersion: HttpVersion.HTTP2_AND_3,
