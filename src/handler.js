@@ -7,6 +7,10 @@ let links = {
     'test-invalid': {
         foo: 'bar'
     },
+    'test-append-params': {
+        url: 'https://example.com?existing=1',
+        appendQueryParams: true,
+    },
 };
 // LINKS_HERE
 
@@ -16,9 +20,19 @@ function getLinkRecord(linkId) {
         return {
             url: typeof linkRecord === 'string' ? linkRecord : linkRecord.url,
             expiresAt: typeof linkRecord === 'object' ? linkRecord.expiresAt : null,
+            appendQueryParams: typeof linkRecord === 'object' ? (linkRecord.appendQueryParams === true) : false,
         }
     }
     return null;
+}
+
+function mergeQueryParams(targetUrl, querystring) {
+    if (!querystring || Object.keys(querystring).length === 0) return targetUrl;
+    const url = new URL(targetUrl);
+    for (const [key, data] of Object.entries(querystring)) {
+        url.searchParams.set(key, data.value);
+    }
+    return url.toString();
 }
 
 function linkHasExpired(redirect) {
@@ -77,7 +91,10 @@ function handler(event) {
                 return linkMessageResponse(linkId, 410, 'Link no longer available');
             }
             if (typeof linkRecord.url === 'string') {
-                return linkRedirectResponse(linkId, linkRecord.url);
+                const targetUrl = linkRecord.appendQueryParams
+                    ? mergeQueryParams(linkRecord.url, event.request.querystring)
+                    : linkRecord.url;
+                return linkRedirectResponse(linkId, targetUrl);
             }
             throw new Error('Link record found but invalid');
         }

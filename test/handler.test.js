@@ -94,4 +94,71 @@ describe('handler', () => {
             "statusDescription": ""
         });
     });
+
+    it('merges incoming query params into redirect url when appendQueryParams is true', () => {
+        const event = {
+            request: {
+                uri: 'test-append-params',
+                querystring: {
+                    existing: { value: 'new' },
+                    extra: { value: 'yes' },
+                }
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com/?existing=new&extra=yes"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
+
+    it('leaves redirect url unchanged when appendQueryParams is true but no query params', () => {
+        const event = {
+            request: {
+                uri: 'test-append-params',
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com?existing=1"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
+
+    it('does not forward query params when appendQueryParams is not set', () => {
+        const event = {
+            request: {
+                uri: 'test-example',
+                querystring: {
+                    foo: { value: 'bar' },
+                }
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
 });
