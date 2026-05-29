@@ -95,7 +95,7 @@ describe('handler', () => {
         });
     });
 
-    it('merges incoming query params into redirect url when appendQueryParams is true', () => {
+    it('appends incoming query params to redirect url when appendQueryParams is true', () => {
         const event = {
             request: {
                 uri: 'test-append-params',
@@ -108,7 +108,7 @@ describe('handler', () => {
         expect(handler(event)).toEqual({
             "headers": {
                 "location": {
-                    "value": "https://example.com?existing=new&extra=yes"
+                    "value": "https://example.com?existing=1&existing=new&extra=yes"
                 },
                 "x-robots-tag": {
                     "value": "noindex",

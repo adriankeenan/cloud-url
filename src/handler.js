@@ -26,25 +26,10 @@ function getLinkRecord(linkId) {
     return null;
 }
 
-function mergeQueryParams(targetUrl, querystring) {
+function appendQueryParams(targetUrl, querystring) {
     if (!querystring || Object.keys(querystring).length === 0) return targetUrl;
-    const qIdx = targetUrl.indexOf('?');
-    const base = qIdx === -1 ? targetUrl : targetUrl.slice(0, qIdx);
-    const existingQs = qIdx === -1 ? '' : targetUrl.slice(qIdx + 1);
-    const params = {};
-    if (existingQs) {
-        for (const pair of existingQs.split('&')) {
-            const eqIdx = pair.indexOf('=');
-            const k = eqIdx === -1 ? pair : pair.slice(0, eqIdx);
-            const v = eqIdx === -1 ? '' : pair.slice(eqIdx + 1);
-            if (k) params[k] = v;
-        }
-    }
-    for (const [key, data] of Object.entries(querystring)) {
-        params[encodeURIComponent(key)] = encodeURIComponent(data.value);
-    }
-    const qs = Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&');
-    return qs ? `${base}?${qs}` : base;
+    const qs = Object.entries(querystring).map(([k, d]) => `${encodeURIComponent(k)}=${encodeURIComponent(d.value)}`).join('&');
+    return targetUrl + (targetUrl.includes('?') ? '&' : '?') + qs;
 }
 
 function linkHasExpired(redirect) {
@@ -104,7 +89,7 @@ function handler(event) {
             }
             if (typeof linkRecord.url === 'string') {
                 const targetUrl = linkRecord.appendQueryParams
-                    ? mergeQueryParams(linkRecord.url, event.request.querystring)
+                    ? appendQueryParams(linkRecord.url, event.request.querystring)
                     : linkRecord.url;
                 return linkRedirectResponse(linkId, targetUrl);
             }
