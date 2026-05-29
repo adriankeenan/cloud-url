@@ -108,7 +108,7 @@ describe('handler', () => {
         expect(handler(event)).toEqual({
             "headers": {
                 "location": {
-                    "value": "https://example.com/?existing=new&extra=yes"
+                    "value": "https://example.com?existing=new&extra=yes"
                 },
                 "x-robots-tag": {
                     "value": "noindex",

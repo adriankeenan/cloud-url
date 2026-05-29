@@ -28,11 +28,23 @@ function getLinkRecord(linkId) {
 
 function mergeQueryParams(targetUrl, querystring) {
     if (!querystring || Object.keys(querystring).length === 0) return targetUrl;
-    const url = new URL(targetUrl);
-    for (const [key, data] of Object.entries(querystring)) {
-        url.searchParams.set(key, data.value);
+    const qIdx = targetUrl.indexOf('?');
+    const base = qIdx === -1 ? targetUrl : targetUrl.slice(0, qIdx);
+    const existingQs = qIdx === -1 ? '' : targetUrl.slice(qIdx + 1);
+    const params = {};
+    if (existingQs) {
+        for (const pair of existingQs.split('&')) {
+            const eqIdx = pair.indexOf('=');
+            const k = eqIdx === -1 ? pair : pair.slice(0, eqIdx);
+            const v = eqIdx === -1 ? '' : pair.slice(eqIdx + 1);
+            if (k) params[k] = v;
+        }
     }
-    return url.toString();
+    for (const [key, data] of Object.entries(querystring)) {
+        params[encodeURIComponent(key)] = encodeURIComponent(data.value);
+    }
+    const qs = Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&');
+    return qs ? `${base}?${qs}` : base;
 }
 
 function linkHasExpired(redirect) {
