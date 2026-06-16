@@ -2,6 +2,6 @@
     "example": "https://example.com",
     "example-with-params": {
         "url": "https://example.com",
-        "appendQueryParams": true
+        "appendQueryParams": ["foo", "bar"]
     }
 }

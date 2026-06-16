@@ -50,13 +50,13 @@ Links can be added either in the format:
     // Object format, with optional expiration and query param passthrough
     "LINK_ID": {
         "url": "URL",
-        "expiresAt": "ISO8601 date",   // optional
-        "appendQueryParams": true      // optional, default false
+        "expiresAt": "ISO8601 date",            // optional
+        "appendQueryParams": ["foo", "bar"]     // optional, params to pass through
     }
 }
 ```
 
-When `appendQueryParams` is `true`, any query params on the incoming request are merged into the redirect URL, with incoming values overriding any params already present in the configured URL.
+When `appendQueryParams` is set, only the listed param names are forwarded from the incoming request and appended to the redirect URL. Params not in the list are dropped.
 
 ## Tests
 

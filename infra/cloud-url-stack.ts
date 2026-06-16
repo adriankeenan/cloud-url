@@ -16,7 +16,7 @@ import {readFileSync} from "fs";
 import {default as links} from '../links.json';
 
 export type LinkRecords = {
-    [key: string]: string | { url: string, expiresAt?: string|null, appendQueryParams?: boolean }
+    [key: string]: string | { url: string, expiresAt?: string|null, appendQueryParams?: string[] }
 };
 
 type CloudUrlStackProps = StackProps & {

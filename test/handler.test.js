@@ -95,7 +95,7 @@ describe('handler', () => {
         });
     });
 
-    it('appends incoming query params to redirect url when appendQueryParams is true', () => {
+    it('appends allowed query params to redirect url', () => {
         const event = {
             request: {
                 uri: 'test-append-params',
@@ -119,7 +119,31 @@ describe('handler', () => {
         });
     });
 
-    it('leaves redirect url unchanged when appendQueryParams is true but no query params', () => {
+    it('does not append params not in the allowlist', () => {
+        const event = {
+            request: {
+                uri: 'test-append-params',
+                querystring: {
+                    existing: { value: 'new' },
+                    notallowed: { value: 'ignored' },
+                }
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com?existing=1&existing=new"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
+
+    it('leaves redirect url unchanged when no query params present', () => {
         const event = {
             request: {
                 uri: 'test-append-params',
