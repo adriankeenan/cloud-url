@@ -7,6 +7,10 @@ let links = {
     'test-invalid': {
         foo: 'bar'
     },
+    'test-append-params': {
+        url: 'https://example.com?existing=1',
+        appendQueryParams: ['existing', 'extra'],
+    },
 };
 // LINKS_HERE
 
@@ -16,9 +20,19 @@ function getLinkRecord(linkId) {
         return {
             url: typeof linkRecord === 'string' ? linkRecord : linkRecord.url,
             expiresAt: typeof linkRecord === 'object' ? linkRecord.expiresAt : null,
+            appendQueryParams: typeof linkRecord === 'object' && linkRecord.appendQueryParams instanceof Array ? linkRecord.appendQueryParams : [],
         }
     }
     return null;
+}
+
+function appendQueryParams(targetUrl, querystring, allowedParams) {
+    if (!querystring || allowedParams.length === 0) return targetUrl;
+    const qs = Object.entries(querystring)
+        .filter(([k]) => allowedParams.includes(k))
+        .map(([k, d]) => `${encodeURIComponent(k)}=${encodeURIComponent(d.value)}`)
+        .join('&');
+    return qs ? targetUrl + (targetUrl.includes('?') ? '&' : '?') + qs : targetUrl;
 }
 
 function linkHasExpired(redirect) {
@@ -77,7 +91,8 @@ function handler(event) {
                 return linkMessageResponse(linkId, 410, 'Link no longer available');
             }
             if (typeof linkRecord.url === 'string') {
-                return linkRedirectResponse(linkId, linkRecord.url);
+                const targetUrl = appendQueryParams(linkRecord.url, event.request.querystring, linkRecord.appendQueryParams);
+                return linkRedirectResponse(linkId, targetUrl);
             }
             throw new Error('Link record found but invalid');
         }

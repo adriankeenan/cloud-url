@@ -7,6 +7,7 @@ Features:
 - ~100ms response time
 - Link management via a JSON file
 - Expiring links
+- Query param passthrough
 - Request logging
 
 Try it out [here](https://i.adriank.dev/cloud-url)
@@ -44,15 +45,18 @@ Update [`links.json`](./links.json) and deploy!
 Links can be added either in the format:
 ```javascript
 {
-    // Simple format, no expiration
+    // Simple format
     "LINK_ID": "URL",
-    // Object format, with optional expiration
+    // Object format, with optional expiration and query param passthrough
     "LINK_ID": {
         "url": "URL",
-        "expiresAt": "ISO8601 date"
+        "expiresAt": "ISO8601 date",            // optional
+        "appendQueryParams": ["foo", "bar"]     // optional, params to pass through
     }
 }
 ```
+
+When `appendQueryParams` is set, only the listed param names are forwarded from the incoming request and appended to the redirect URL. Params not in the list are dropped.
 
 ## Tests
 

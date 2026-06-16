@@ -94,4 +94,95 @@ describe('handler', () => {
             "statusDescription": ""
         });
     });
+
+    it('appends allowed query params to redirect url', () => {
+        const event = {
+            request: {
+                uri: 'test-append-params',
+                querystring: {
+                    existing: { value: 'new' },
+                    extra: { value: 'yes' },
+                }
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com?existing=1&existing=new&extra=yes"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
+
+    it('does not append params not in the allowlist', () => {
+        const event = {
+            request: {
+                uri: 'test-append-params',
+                querystring: {
+                    existing: { value: 'new' },
+                    notallowed: { value: 'ignored' },
+                }
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com?existing=1&existing=new"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
+
+    it('leaves redirect url unchanged when no query params present', () => {
+        const event = {
+            request: {
+                uri: 'test-append-params',
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com?existing=1"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
+
+    it('does not forward query params when appendQueryParams is not set', () => {
+        const event = {
+            request: {
+                uri: 'test-example',
+                querystring: {
+                    foo: { value: 'bar' },
+                }
+            }
+        };
+        expect(handler(event)).toEqual({
+            "headers": {
+                "location": {
+                    "value": "https://example.com"
+                },
+                "x-robots-tag": {
+                    "value": "noindex",
+                },
+            },
+            "statusCode": 307,
+            "statusDescription": ""
+        });
+    });
 });
