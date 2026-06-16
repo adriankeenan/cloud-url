@@ -20,7 +20,7 @@ function getLinkRecord(linkId) {
         return {
             url: typeof linkRecord === 'string' ? linkRecord : linkRecord.url,
             expiresAt: typeof linkRecord === 'object' ? linkRecord.expiresAt : null,
-            appendQueryParams: typeof linkRecord === 'object' && Array.isArray(linkRecord.appendQueryParams) ? linkRecord.appendQueryParams : [],
+            appendQueryParams: typeof linkRecord === 'object' && linkRecord.appendQueryParams instanceof Array ? linkRecord.appendQueryParams : [],
         }
     }
     return null;
